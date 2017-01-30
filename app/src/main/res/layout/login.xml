@@ -1,0 +1,96 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#ffffff"
+    android:padding="10dp">
+
+
+    <!-- Dark Grey = #222222 -->
+    <!-- Light Grey = #222222 -->
+    <!-- Green = #00aa55 -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerVertical="true"
+        android:padding="10dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="THANKS"
+            android:typeface="sans"
+            android:textSize="35sp"
+            android:textColor="#222222"
+            android:textStyle="bold"
+            android:gravity="center" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TRUCKING"
+            android:typeface="sans"
+            android:textSize="35sp"
+            android:textColor="#EF573F"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:id="@+id/textView2" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="45dp"
+            android:textColor="#ffffff"
+            android:textStyle="bold"
+            android:textColorHint="#ffffff"
+            android:background="#222222"
+            android:padding="10dp"
+
+            android:hint="USERNAME"
+            android:textSize="20sp"
+            android:id="@+id/userId" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:hint="PASSWORD"
+            android:textColor="#ffffff"
+            android:textColorHint="#ffffff"
+            android:textStyle="bold"
+            android:background="#222222"
+            android:padding="10dp"
+            android:inputType="textPassword"
+            android:layout_marginTop="5dp"
+            android:id="@+id/password" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#EF573F"
+            android:textColor="#ffffff"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:padding="10dp"
+            android:layout_marginTop="30dp"
+            android:id="@+id/loginButton"
+            android:text="Login" />
+
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:id="@+id/pbbar" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            app:srcCompat="@mipmap/icon"
+            android:id="@+id/imageView"
+            android:layout_marginTop="15dp"/>
+    </LinearLayout>
+</RelativeLayout>
