@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">TM Trucking</string>
     <string name="title_activity_dashboard">Map</string>
+
+    <string-array name="optionsArray">
+        <item>Envelop</item>
+        <item>Small</item>
+        <item>Medium</item>
+        <item>Large</item>
+    </string-array>
 </resources>

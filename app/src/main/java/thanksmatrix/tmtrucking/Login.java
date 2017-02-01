@@ -2,19 +2,13 @@ package thanksmatrix.tmtrucking;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 
 /**
  * Created by KangSu on 1/30/2017.
@@ -37,16 +31,6 @@ public class Login extends AppCompatActivity {
         btnlogin = (Button) findViewById(R.id.loginButton);
         pbbar = (ProgressBar) findViewById(R.id.pbbar);
         pbbar.setVisibility(View.GONE);
-
-//        btnlogin.setOnClickListener(new View.OnClickListener() {
-//
-//            @Override
-//            public void onClick(View v) {
-//                DoLogin doLogin = new DoLogin();
-//                doLogin.execute("");
-//            }
-//        });
-
     }
     private void addListenerOnButton() {
         final Context context = this;
@@ -58,9 +42,18 @@ public class Login extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-
     }
+
+
+//        btnlogin.setOnClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View v) {
+//                DoLogin doLogin = new DoLogin();
+//                doLogin.execute("");
+//            }
+//        });
+
 //    public class DoLogin extends AsyncTask<String,String,String>
 //    {
 //        String z = "";
