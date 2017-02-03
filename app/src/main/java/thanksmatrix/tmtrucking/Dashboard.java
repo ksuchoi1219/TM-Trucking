@@ -156,7 +156,9 @@ public class Dashboard extends AppCompatActivity implements OnMapReadyCallback, 
                 dstn.setLatitude(dest.latitude);
                 dstn.setLongitude(dest.longitude);
 
-                strDist = Float.toString((float) (ogn.distanceTo(dstn) * 0.000621371));
+                strDist = String.format("%.2f", (float) (ogn.distanceTo(dstn) * 0.000621371));
+
+                //Toast.makeText(getBaseContext(), " ASDF " + strDist,  Toast.LENGTH_SHORT).show();
 
                 //Toast.makeText(getBaseContext(), "You have selected : " + spinner.getSelectedItem().toString() + " " + userDestinationMarker.getPosition() + " " + currMarker.getPosition(),  Toast.LENGTH_SHORT).show();
                 String url = getDirectionsUrl(origin, dest);

@@ -1,19 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:background="#fff"
+    android:layout_height="match_parent"
+    tools:context="thanksmatrix.tmtrucking.Payment">
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="Distance:"
-        android:ems="10"
-        android:id="@+id/textDistance" />
+        android:text="YOUR ORDER"
+        android:textSize="22dp"
+        android:textColor="#000"
+        android:layout_marginTop="15dp"
+        android:id="@+id/yourorder"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 
-    <TextView
+    <View
         android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="55dp" />
+    <!--DISTANCE-->
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="Price:"
-        android:ems="10"
-        android:id="@+id/textPrice" />
-</LinearLayout>
+        android:textSize="22dp"
+        android:hint="Distance: 3.12"
+        android:textColor="#000"
+        android:id="@+id/textDistance"
+        android:layout_marginLeft="120dp"
+        android:layout_marginTop="190dp"
+/>
+    <!--PRICE-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="22dp"
+        android:hint="Price: 3.12"
+        android:textColor="#000"
+        android:id="@+id/textPrice"
+        android:layout_marginLeft="120dp"
+        android:layout_marginTop="220dp"
+        android:layout_alignEnd="@+id/textDistance"
+         />
+
+    <!--TAX-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Tax: 3.11"
+        android:textSize="22dp"
+        android:textColor="#000"
+        android:id="@+id/tax"
+        android:layout_marginTop="250dp"
+        android:layout_marginLeft="120dp"
+        android:layout_alignEnd="@+id/textDistance"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="355dp" />
+    <!--TOTAL-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="YOUR TOTAL: "
+        android:textSize="27dp"
+        android:textColor="#000"
+        android:id="@+id/total"
+        android:layout_marginTop="410dp"
+        android:layout_marginLeft="80dp"/>
+
+    <Button
+        android:text="CONFIRM"
+        android:padding="3dp"
+        android:background="@drawable/buttonshape"
+        android:layout_width="90dp"
+        android:layout_height="50dp"
+        android:id="@+id/goButton"
+        android:onClick="confirm"
+        android:shadowColor="#A8A8A8"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="5"
+        android:layout_marginLeft="240dp"
+        android:fontFamily="sans-serif-medium"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="18dp" />
+
+
+</RelativeLayout>

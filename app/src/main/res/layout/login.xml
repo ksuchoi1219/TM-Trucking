@@ -24,6 +24,7 @@
             android:text="THANKS"
             android:typeface="sans"
             android:textSize="35sp"
+            android:layout_marginTop="55dp"
             android:textColor="#222222"
             android:textStyle="bold"
             android:gravity="center" />
@@ -42,13 +43,12 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="45dp"
+            android:layout_marginTop="65dp"
             android:textColor="#ffffff"
             android:textStyle="bold"
             android:textColorHint="#ffffff"
             android:background="#222222"
             android:padding="10dp"
-
             android:hint="USERNAME"
             android:textSize="20sp"
             android:id="@+id/userId" />
@@ -68,8 +68,8 @@
             android:id="@+id/password" />
 
         <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="120dp"
+            android:layout_height="90dp"
             android:backgroundTint="#EF573F"
             android:textColor="#ffffff"
             android:textStyle="bold"
@@ -77,20 +77,21 @@
             android:padding="10dp"
             android:layout_marginTop="30dp"
             android:id="@+id/loginButton"
+            android:layout_marginLeft="110dp"
             android:text="Login" />
 
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            app:srcCompat="@mipmap/icon"
+            android:id="@+id/imageView"
+            android:layout_marginTop="15dp"/>
 
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:id="@+id/pbbar" />
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="120dp"
-            app:srcCompat="@mipmap/icon"
-            android:id="@+id/imageView"
-            android:layout_marginTop="15dp"/>
     </LinearLayout>
 </RelativeLayout>

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 /**
@@ -12,36 +13,45 @@ import android.widget.TextView;
 
 public class Payment extends AppCompatActivity {
 
+    private TextView userDistance, userPrice, userTax, userTotal;
+    private String distance, userOption, strPrice, strTax, strTotal;
+    private float price, tax, total;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.payment);
-        TextView userDistance, userPrice;
         userDistance = (TextView) findViewById(R.id.textDistance);
         userPrice = (TextView) findViewById(R.id.textPrice);
-        String userOption;
-        String strPrice;
-        float price;
+        userTax = (TextView) findViewById(R.id.tax);
+        userTotal = (TextView) findViewById(R.id.total);
 
         Intent intent = getIntent();
-        String distance = intent.getStringExtra("dist");
-
-        userDistance.setText("Distance: " + distance);
-
-        price = (float) (Float.parseFloat(distance) * 1.25);
+        distance = intent.getStringExtra("dist");
         userOption = intent.getStringExtra("option");
-        if (userOption == "Envelop") {
+
+        //PRICE CALCULATION
+        price = (float) (Float.parseFloat(distance) * 1.25);
+        tax = price / 10;
+        if (userOption.equals("Envelop")) {
             price *= 2;
-        } else if (userOption == "Small") {
+        } else if (userOption.equals("Small")) {
             price *= 3;
-        } else if (userOption == "Medium") {
+        } else if (userOption.equals("Medium")) {
             price *= 4;
-        } else {
+        } else if (userOption.equals("Large")){
             price *= 5;
         }
-        strPrice = Float.toString(price);
+        total = price + tax;
+
+        strPrice = String.format("%.2f", price);
+        strTax = String.format("%.2f", tax);
+        strTotal = String.format("%.2f", total);
+
+        userDistance.setText("Distance: " + distance + " miles");
         userPrice.setText("Price: $" + strPrice);
+        userTax.setText("Tax: $" + strTax);
+        userTotal.setText("YOUR TOTAL: $" + strTotal);
     }
 
 }
