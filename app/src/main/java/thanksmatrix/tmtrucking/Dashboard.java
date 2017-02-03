@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -20,6 +21,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
@@ -40,6 +42,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import org.json.JSONObject;
 import java.io.BufferedReader;
@@ -56,24 +59,23 @@ import java.util.List;
 public class Dashboard extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
         private GoogleMap mGoogleMap;
-        private SupportMapFragment mapFrag;
-        private LocationRequest mLocationRequest;
         private GoogleApiClient mGoogleApiClient;
-
-        private Location currentLocation;
+        private Spinner spinner;
         private Marker currMarker;
-        private Place destination;
         private Marker userDestinationMarker;
         private MarkerOptions currMarkerOptions = new MarkerOptions();
-        private Spinner spinner;
-        private String[] deliveryOptions;
+        private PolylineOptions lineOptions = null;
+        private String strDist;
     @Override
     protected void onCreate(Bundle savedInstanceState)
         {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.dashboard);
+            SupportMapFragment mapFrag;
+
             mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
             mapFrag.getMapAsync(this);
+            String[] deliveryOptions;
             deliveryOptions = getResources().getStringArray(R.array.optionsArray);
             spinner = (Spinner) findViewById(R.id.spinner);
             ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, deliveryOptions);
@@ -91,39 +93,71 @@ public class Dashboard extends AppCompatActivity implements OnMapReadyCallback, 
 
         }
 
+    public void goPayment(View view) {
+        Button goButton;
+        goButton = (Button) findViewById(R.id.goButton);
+        if (spinner.getSelectedItem() == null) {
+            Toast.makeText(getBaseContext(), "Please select the delivery option.",  Toast.LENGTH_SHORT).show();
+        } else {
+            goButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(getApplicationContext(), Payment.class);
+                    i.putExtra("dist", strDist);
+                    i.putExtra("option", spinner.getSelectedItem().toString());
+                    startActivity(i);
+                }
+            });
+        }
+    }
 
     public void findPlace(View view) {
         try {
-            Intent intent =
-                    new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY).build(this);
+            Intent intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY).build(this);
             startActivityForResult(intent, 1);
         } catch (GooglePlayServicesRepairableException e) {
         } catch (GooglePlayServicesNotAvailableException e) {
         }
-        //NOTIFICATION
 
-//        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
-//                .setSmallIcon(R.mipmap.icon)
-//                .setContentTitle("Notification")
-//                .setContentText("You have new notification!")
-//                .setVibrate(new long[] {500, 900});
-//        Intent notificationIntent = new Intent(this, NotificationView.class);
-//        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-//        builder.setContentIntent(contentIntent);
-//        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-//        manager.notify(0, builder.build());
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.mipmap.icon)
+                .setContentTitle("Notification")
+                .setContentText("You have new notification!")
+                .setVibrate(new long[] {500, 900});
+        Intent notificationIntent = new Intent(this, NotificationView.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setContentIntent(contentIntent);
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.notify(0, builder.build());
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
+                Place destination;
                 destination = PlaceAutocomplete.getPlace(this, data);
                 if (userDestinationMarker != null) {
                     userDestinationMarker.remove();
                 }
                 userDestinationMarker = mGoogleMap.addMarker(new MarkerOptions().position(destination.getLatLng()));
-                LatLng origin = currMarker.getPosition();
-                LatLng dest = userDestinationMarker.getPosition();
+                LatLng origin;
+                LatLng dest;
+                Location ogn;
+                Location dstn;
+                origin = currMarker.getPosition();
+                dest = userDestinationMarker.getPosition();
+
+                ogn = new Location("");
+                ogn.setLatitude(origin.latitude);
+                ogn.setLongitude(origin.longitude);
+
+                dstn = new Location("");
+                dstn.setLatitude(dest.latitude);
+                dstn.setLongitude(dest.longitude);
+
+                strDist = Float.toString((float) (ogn.distanceTo(dstn) * 0.000621371));
+
                 //Toast.makeText(getBaseContext(), "You have selected : " + spinner.getSelectedItem().toString() + " " + userDestinationMarker.getPosition() + " " + currMarker.getPosition(),  Toast.LENGTH_SHORT).show();
                 String url = getDirectionsUrl(origin, dest);
                 DownloadTask downloadTask = new DownloadTask();
@@ -139,6 +173,7 @@ public class Dashboard extends AppCompatActivity implements OnMapReadyCallback, 
 
     }
     private String getDirectionsUrl(LatLng origin, LatLng dest) {
+
         String originStr = "origin=" + origin.latitude + "," + origin.longitude;
         String destStr = "destination=" + dest.latitude + "," + dest.longitude;
         String sensor = "sensor=false";
@@ -184,74 +219,7 @@ public class Dashboard extends AppCompatActivity implements OnMapReadyCallback, 
         }
         return data;
     }
-    private class DownloadTask extends AsyncTask<String, Void, String> {
 
-        @Override
-        protected String doInBackground(String... url) {
-
-            String data = "";
-
-            try{
-                data = downloadUrl(url[0]);
-            }catch(Exception e){
-                Log.d("Background Task",e.toString());
-            }
-            return data;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-            ParserTask parserTask = new ParserTask();
-            parserTask.execute(result);
-        }
-    }
-    private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String,String>>> >{
-
-        @Override
-        protected List<List<HashMap<String, String>>> doInBackground(String... jsonData) {
-
-            JSONObject jObject;
-            List<List<HashMap<String, String>>> routes = null;
-
-            try{
-                jObject = new JSONObject(jsonData[0]);
-                DirectionsJSONParser parser = new DirectionsJSONParser();
-                routes = parser.parse(jObject);
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-            return routes;
-        }
-
-        @Override
-        protected void onPostExecute(List<List<HashMap<String, String>>> result) {
-            ArrayList<LatLng> points;
-            PolylineOptions lineOptions = null;
-
-            for(int i=0;i<result.size();i++){
-                points = new ArrayList<>();
-                lineOptions = new PolylineOptions();
-                List<HashMap<String, String>> path = result.get(i);
-
-                for(int j=0;j<path.size();j++){
-                    HashMap<String,String> point = path.get(j);
-
-                    double lat = Double.parseDouble(point.get("lat"));
-                    double lng = Double.parseDouble(point.get("lng"));
-                    LatLng position = new LatLng(lat, lng);
-
-                    points.add(position);
-                }
-
-                lineOptions.addAll(points);
-                lineOptions.width(9);
-                lineOptions.color(Color.RED);
-            }
-
-            mGoogleMap.addPolyline(lineOptions);
-        }
-    }
 
     @Override
     public void onPause() {
@@ -262,13 +230,10 @@ public class Dashboard extends AppCompatActivity implements OnMapReadyCallback, 
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap)
-        {
+    public void onMapReady(GoogleMap googleMap) {
             mGoogleMap = googleMap;
             if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(this,
-                android.Manifest.permission.ACCESS_FINE_LOCATION)
-                    == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 buildGoogleApiClient();
                 mGoogleMap.setMyLocationEnabled(true);
             } else {
@@ -279,7 +244,7 @@ public class Dashboard extends AppCompatActivity implements OnMapReadyCallback, 
                 buildGoogleApiClient();
                 mGoogleMap.setMyLocationEnabled(true);
             }
-        }
+    }
 
     protected synchronized void buildGoogleApiClient() {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -292,13 +257,12 @@ public class Dashboard extends AppCompatActivity implements OnMapReadyCallback, 
 
     @Override
     public void onConnected(Bundle bundle) {
+        LocationRequest mLocationRequest;
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(1000);
         mLocationRequest.setFastestInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-        if (ContextCompat.checkSelfPermission(this,
-            android.Manifest.permission.ACCESS_FINE_LOCATION)
-            == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
         }
     }
@@ -310,9 +274,9 @@ public class Dashboard extends AppCompatActivity implements OnMapReadyCallback, 
     public void onConnectionFailed(ConnectionResult connectionResult) {}
 
     @Override
-    public void onLocationChanged(Location location)
-        {
-            currentLocation = location;
+    public void onLocationChanged(Location location) {
+
+            Location currentLocation = location;
             if (currMarker != null) {
                 currMarker.remove();
             }
@@ -328,58 +292,107 @@ public class Dashboard extends AppCompatActivity implements OnMapReadyCallback, 
             if (mGoogleApiClient != null) {
                 LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
             }
-        }
+    }
 
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+    private static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private void checkLocationPermission() {
-            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    android.Manifest.permission.ACCESS_FINE_LOCATION)) {
-
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
                     new AlertDialog.Builder(this)
                         .setTitle("Location Permission Needed")
                         .setMessage("This app needs the Location permission, please accept to use location functionality")
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        ActivityCompat.requestPermissions(Dashboard.this,
-                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                            MY_PERMISSIONS_REQUEST_LOCATION );
+                        ActivityCompat.requestPermissions(Dashboard.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_LOCATION );
                     }
                     })
                 .create()
                 .show();
                 } else {
-                    ActivityCompat.requestPermissions(this,
-                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    MY_PERMISSIONS_REQUEST_LOCATION );
+                    ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_LOCATION );
                 }
             }
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-            String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
             switch (requestCode) {
                 case MY_PERMISSIONS_REQUEST_LOCATION: {
-                if (grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                if (ContextCompat.checkSelfPermission(this,
-                    android.Manifest.permission.ACCESS_FINE_LOCATION)
-                    == PackageManager.PERMISSION_GRANTED) {
-                if (mGoogleApiClient == null) {
-                    buildGoogleApiClient();
-                }
-                mGoogleMap.setMyLocationEnabled(true);
-                }
-            } else {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                        if (mGoogleApiClient == null) {
+                            buildGoogleApiClient();
+                        }
+                        mGoogleMap.setMyLocationEnabled(true);
+                    }
+                } else {
                 Toast.makeText(this, "permission denied", Toast.LENGTH_LONG).show();
+                }
+                return;
+                }
             }
-            return;
+    }
+
+    private class DownloadTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... url) {
+            String data = "";
+            try{
+                data = downloadUrl(url[0]);
+            }catch(Exception e){
+                Log.d("Background Task",e.toString());
             }
+            return data;
         }
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            ParserTask parserTask = new ParserTask();
+            parserTask.execute(result);
         }
-    
+    }
+    private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String,String>>> >{
+
+
+        @Override
+        protected List<List<HashMap<String, String>>> doInBackground(String... jsonData) {
+            JSONObject jObject;
+            List<List<HashMap<String, String>>> routes = null;
+            try{
+                jObject = new JSONObject(jsonData[0]);
+                DirectionsJSONParser parser = new DirectionsJSONParser();
+                routes = parser.parse(jObject);
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            return routes;
+        }
+
+        @Override
+        protected void onPostExecute(List<List<HashMap<String, String>>> result) {
+            ArrayList<LatLng> points;
+            for(int i=0; i < result.size(); i++){
+                points = new ArrayList<>();
+                lineOptions = new PolylineOptions();
+                List<HashMap<String, String>> path = result.get(i);
+
+                for(int j = 0; j < path.size(); j++){
+                    HashMap<String,String> point = path.get(j);
+                    double lat = Double.parseDouble(point.get("lat"));
+                    double lng = Double.parseDouble(point.get("lng"));
+                    LatLng position = new LatLng(lat, lng);
+                    points.add(position);
+                }
+                lineOptions.addAll(points);
+                lineOptions.width(11);
+                lineOptions.color(Color.RED);
+            }
+
+            mGoogleMap.addPolyline(lineOptions);
+
+        }
+    }
     }
 

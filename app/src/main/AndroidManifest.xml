@@ -49,6 +49,7 @@
                 android:value=".Dashboard" />
         </activity>
         <activity android:name=".Dashboard"></activity>
+        <activity android:name=".Payment"></activity>
     </application>
 
 </manifest>
