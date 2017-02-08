@@ -119,16 +119,16 @@ public class Dashboard extends AppCompatActivity implements OnMapReadyCallback, 
         } catch (GooglePlayServicesNotAvailableException e) {
         }
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.mipmap.icon)
-                .setContentTitle("Notification")
-                .setContentText("You have new notification!")
-                .setVibrate(new long[] {500, 900});
-        Intent notificationIntent = new Intent(this, NotificationView.class);
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        builder.setContentIntent(contentIntent);
-        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        manager.notify(0, builder.build());
+//        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+//                .setSmallIcon(R.mipmap.icon)
+//                .setContentTitle("Notification")
+//                .setContentText("You have new notification!")
+//                .setVibrate(new long[] {500, 900});
+//        Intent notificationIntent = new Intent(this, NotificationView.class);
+//        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+//        builder.setContentIntent(contentIntent);
+//        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+//        manager.notify(0, builder.build());
     }
 
     @Override
@@ -160,7 +160,6 @@ public class Dashboard extends AppCompatActivity implements OnMapReadyCallback, 
 
                 //Toast.makeText(getBaseContext(), " ASDF " + strDist,  Toast.LENGTH_SHORT).show();
 
-                //Toast.makeText(getBaseContext(), "You have selected : " + spinner.getSelectedItem().toString() + " " + userDestinationMarker.getPosition() + " " + currMarker.getPosition(),  Toast.LENGTH_SHORT).show();
                 String url = getDirectionsUrl(origin, dest);
                 DownloadTask downloadTask = new DownloadTask();
                 downloadTask.execute(url);

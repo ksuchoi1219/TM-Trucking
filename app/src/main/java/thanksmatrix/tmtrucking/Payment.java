@@ -1,8 +1,11 @@
 package thanksmatrix.tmtrucking;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,11 +19,17 @@ public class Payment extends AppCompatActivity {
     private TextView userDistance, userPrice, userTax, userTotal;
     private String distance, userOption, strPrice, strTax, strTotal;
     private float price, tax, total;
+    private Button confirm;
+
+    public Payment() {
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.payment);
+        addListenerOnButton();
+
         userDistance = (TextView) findViewById(R.id.textDistance);
         userPrice = (TextView) findViewById(R.id.textPrice);
         userTax = (TextView) findViewById(R.id.tax);
@@ -29,8 +38,12 @@ public class Payment extends AppCompatActivity {
         Intent intent = getIntent();
         distance = intent.getStringExtra("dist");
         userOption = intent.getStringExtra("option");
-
+        setPrice(distance, userOption);
         //PRICE CALCULATION
+
+    }
+
+    private void setPrice(String dist, String option) {
         price = (float) (Float.parseFloat(distance) * 1.25);
         tax = price / 10;
         if (userOption.equals("Envelop")) {
@@ -53,5 +66,15 @@ public class Payment extends AppCompatActivity {
         userTax.setText("Tax: $" + strTax);
         userTotal.setText("YOUR TOTAL: $" + strTotal);
     }
-
+    private void addListenerOnButton() {
+        final Context context = this;
+        confirm = (Button) findViewById(R.id.confirmButton);
+        confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, Message.class);
+                startActivity(intent);
+            }
+        });
+    }
 }

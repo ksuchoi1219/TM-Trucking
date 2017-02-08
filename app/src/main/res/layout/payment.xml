@@ -82,7 +82,7 @@
         android:background="@drawable/buttonshape"
         android:layout_width="90dp"
         android:layout_height="50dp"
-        android:id="@+id/goButton"
+        android:id="@+id/confirmButton"
         android:onClick="confirm"
         android:shadowColor="#A8A8A8"
         android:shadowDx="0"
